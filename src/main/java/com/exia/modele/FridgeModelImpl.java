@@ -17,20 +17,22 @@ public class FridgeModelImpl extends Observable implements FridgeModel {
 	private static final int PIN_NUMBER_FOR_SENSOR_TEMP = 5;
 
 	private static final int PIN_NUMBER_FOR_LED = 13;
-
+	
 	IODevice device;
 
 	private Pin led;
 
 	private Pin sensorTemp;
-
+	
 	private int consigne = 15;
 
 	private long temperatureInt = 0;
+	
+	private long temperatureExt = 3;
 
 	public FridgeModelImpl() {
 
-		device = new FirmataDevice("COM7");
+		device = new FirmataDevice("COM8");
 		try {
 			device.start();
 			device.ensureInitializationIsDone();
@@ -38,10 +40,7 @@ public class FridgeModelImpl extends Observable implements FridgeModel {
 			led = device.getPin(PIN_NUMBER_FOR_LED);
 			led.setMode(Pin.Mode.OUTPUT);
 			led.setValue(0);
-
-			// sensorTemp = device.getPin(PIN_NUMBER_FOR_SENSOR_TEMP);
-			// sensorTemp.setMode(Pin.Mode.ANALOG);
-
+			
 			device.start();
 			try {
 				device.ensureInitializationIsDone();
@@ -80,14 +79,21 @@ public class FridgeModelImpl extends Observable implements FridgeModel {
 	}
 
 	long test = 0;
-
+	
 	@Override
-	public long getValueForSensorTemp() {
+	public long getValueForSensorTempInt() {
 		// TODO : chercher la vrai valeur
 		// return sensorTemp.getValue();
 		return test++;
 	}
-
+	
+	@Override
+	public long getValueForSensorTempExt() {
+		// TODO : chercher la vrai valeur
+		// return sensorTemp.getValue();
+		return test++;
+	}
+	
 	@Override
 	public void setConsigne(int consigne) {
 		logger.debug("le modele met la valeur " + consigne + " en mémoire");
@@ -95,17 +101,7 @@ public class FridgeModelImpl extends Observable implements FridgeModel {
 		logger.debug("le modele notifyObserver avec le message \"consigne=\" "+ consigne);
 		notifyObserver("consigne=" + consigne);
 	}
-
-	// Température interne
-
-	// Température externe
-
-	// Température Module Peltier
-
-	// Point de rosée
-
-	// Consigne
-
+	
 	private ArrayList<Observer> listObserver = new ArrayList<Observer>();
 
 	// Implémentation du pattern observer
@@ -129,5 +125,11 @@ public class FridgeModelImpl extends Observable implements FridgeModel {
 		logger.debug("le modele notifyObserver avec le message \"consigne=\" "+ consigne);
 		notifyObserver("tempInt=" + temperatureInt);
 	}
-
+	
+	@Override
+	public void setTemperatureExt(long temperatureExt) {
+		this.temperatureExt = temperatureExt;
+		logger.debug("le modele notifyObserver avec le message \"consigne=\" "+ consigne);
+		notifyObserver("tempExt=" + temperatureExt);
+	}
 }

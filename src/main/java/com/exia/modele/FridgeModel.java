@@ -6,11 +6,15 @@ public interface FridgeModel {
 
 	void setValueForLed(long value);
 
-	long getValueForSensorTemp();
-
+	long getValueForSensorTempInt();
+	
+	long getValueForSensorTempExt();
+	
 	int getConsigne();
 
 	void setConsigne(int consigne);
 
 	void setTemperatureInt(long temperatureInt);
+
+	void setTemperatureExt(long temperatureExt);
 }

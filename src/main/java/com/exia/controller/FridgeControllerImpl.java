@@ -77,12 +77,14 @@ public class FridgeControllerImpl extends TimerTask implements FridgeController 
 	public int getConsigne() {
 		return model.getConsigne();
 	}
-
+	
 	@Override
 	public void run() {
         logger.info("début tache");
-        long calculTemperature = (model.getValueForSensorTemp() * 5) /15;
-        model.setTemperatureInt(calculTemperature);
+        long calculTemperatureInt = (model.getValueForSensorTempInt() * 5) /15;
+        model.setTemperatureInt(calculTemperatureInt);
+        long calculTemperatureExt = (model.getValueForSensorTempExt() +1);
+        model.setTemperatureExt(calculTemperatureExt);
         logger.info("fin tache");
 	}
 

@@ -6,7 +6,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Label;
-import java.awt.TextArea;
 import java.awt.TextField;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -44,52 +43,48 @@ import jssc.SerialPortList;
 public class View implements Observer {
 
 	private static Logger logger = Logger.getLogger(View.class);
-	
+
 	private static final JFrame INITIALIZATION_FRAME = new JFrame();
 
 	private FridgeController controller;
-	
+
 	public View(FridgeController controller) {
 		super();
 		this.controller = controller;
 	}
-	
+	private JFrame mainFrame;
+	private JPanel panel;
+	private JPanel panel_1;
+	private Label label;
+	private JLabel lbltatLed;
+	private JLabel lblTempratureConsigne;
+	private JLabel lblTempratureIntrieure;
+	private JLabel lblTempratureDuModule;
+	private JLabel lblTempratureExtrieure;
+	private JLabel lblCondensation;
+	private JLabel lblAugmentationAnormale;
+	private JTextField anomalieTextField;
+	private JTextField augmentTempTextField;
+	private JTextField temperatureInterieurTextField;
+	private JTextField temperatureModuleTextField;
 	private TextField consigneTextField;
-	private JTextField textField_6;
+	private JTextField temperatureExterieureTextField;
+	private JTextField textFieldEtatLED;
+	private Button button;
+	private Button button_1;
+	private JButton btnAllumerteindreLed;
 
 	/**
 	 * @wbp.parser.entryPoint
 	 */
 	public void run() throws IOException, InterruptedException {
-		
+
 		SwingUtilities.invokeLater(new Runnable() {
-			
-			private JTextField textFieldEtatLED;
-			private JFrame mainFrame;
-			private JPanel panel;
-			private JPanel panel_1;
-			private Label label;
-			private Button button;
-			private Button button_1;
-			private JLabel lbltatLed;
-			private JLabel lblTempratureConsigne;
-			private JLabel lblTempratureIntrieure;
-			private JLabel lblTempratureDuModule;
-			private JLabel lblTempratureExtrieure;
-			private JLabel lblCondensation;
-			private JTextField textField_2;
-			private JLabel lblAugmentationAnormale;
-			private JTextField textField_3;
-			private JTextField textField_4;
-			private JTextField textField_5;
-			private JButton btnAllumerteindreLed;
-			private TextArea textArea;
-			
+
 			@Override
 			public void run() {
-
 				mainFrame = new JFrame("Projet PMF");
-				mainFrame.setBounds(100, 100, 784, 573);
+				mainFrame.setBounds(100, 100, 750, 500);
 				mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				mainFrame.getContentPane().setLayout(new BorderLayout(0, 0));
 
@@ -106,13 +101,9 @@ public class View implements Observer {
 				mainFrame.getContentPane().add(panel_1, BorderLayout.CENTER);
 				panel_1.setLayout(null);
 
-				consigneTextField = new TextField("" + controller.getConsigne());
-				consigneTextField.setEditable(false);
-				consigneTextField.setBounds(120, 83, 65, 63);
-				panel_1.add(consigneTextField);
-
 				button = new Button("-");
 				button.setBounds(10, 94, 79, 24);
+				button.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
 				panel_1.add(button);
 				button.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
@@ -122,6 +113,7 @@ public class View implements Observer {
 
 				button_1 = new Button("+");
 				button_1.setBounds(221, 94, 79, 24);
+				button_1.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
 				panel_1.add(button_1);
 				button_1.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
@@ -129,78 +121,11 @@ public class View implements Observer {
 					}
 				});
 
-				textFieldEtatLED = new JTextField("");
-				textFieldEtatLED.setBounds(589, 24, 116, 22);
-				textFieldEtatLED.setEditable(false);
-				panel_1.add(textFieldEtatLED);
-				textFieldEtatLED.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						// if led allumé : allumé
-						// else éteinte
-					}
-				});
-				textFieldEtatLED.setColumns(10);
-
-				lbltatLed = new JLabel("État LED : ");
-				lbltatLed.setBounds(489, 27, 88, 16);
-				panel_1.add(lbltatLed);
-
-				lblTempratureConsigne = new JLabel("Température de consigne : ");
-				lblTempratureConsigne.setBounds(50, 53, 182, 24);
-				panel_1.add(lblTempratureConsigne);
-
-				lblTempratureIntrieure = new JLabel("Température intérieure : ");
-				lblTempratureIntrieure.setBounds(50, 151, 182, 30);
-				panel_1.add(lblTempratureIntrieure);
-
-				lblTempratureDuModule = new JLabel("Température du module réfrigérant : ");
-				lblTempratureDuModule.setBounds(50, 188, 225, 30);
-				panel_1.add(lblTempratureDuModule);
-				
-				lblTempratureExtrieure = new JLabel("Température extérieure : ");
-				lblTempratureExtrieure.setBounds(50, 231, 182, 30);
-				panel_1.add(lblTempratureExtrieure);
-				
-				lblCondensation = new JLabel("Condensation :");
-				lblCondensation.setBounds(516, 191, 97, 16);
-				panel_1.add(lblCondensation);
-				
-				textField_2 = new JTextField();
-				textField_2.setBounds(625, 188, 116, 22);
-				panel_1.add(textField_2);
-				textField_2.setColumns(10);
-
-				lblAugmentationAnormale = new JLabel("Augmentation anormale de température : ");
-				lblAugmentationAnormale.setBounds(335, 223, 266, 16);
-				panel_1.add(lblAugmentationAnormale);
-
-				textField_3 = new JTextField();
-				textField_3.setColumns(10);
-				textField_3.setBounds(625, 220, 116, 22);
-				panel_1.add(textField_3);
-
-				textField_4 = new JTextField();
-				textField_4.setEditable(false);
-				textField_4.setBounds(203, 155, 116, 22);
-				panel_1.add(textField_4);
-				textField_4.setColumns(10);
-
-				textField_5 = new JTextField();
-				textField_5.setEditable(false);
-				textField_5.setColumns(10);
-				textField_5.setBounds(264, 192, 116, 22);
-				panel_1.add(textField_5);
-
-				textField_6 = new JTextField();
-				textField_6.setEditable(false);
-				textField_6.setColumns(10);
-				textField_6.setBounds(203, 235, 116, 22);
-				panel_1.add(textField_6);
-				
 				btnAllumerteindreLed = new JButton("Allumer/Éteindre LED");
-				btnAllumerteindreLed.setBounds(504, 101, 182, 25);
+				btnAllumerteindreLed.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
+				btnAllumerteindreLed.setBounds(500, 100, 180, 25);
 				btnAllumerteindreLed.addActionListener(new ActionListener() {
-					
+
 					public void actionPerformed(ActionEvent e) {
 						try {
 							textFieldEtatLED.setText("" + controller.Allumer_eteindre());
@@ -215,8 +140,95 @@ public class View implements Observer {
 				});
 				panel_1.add(btnAllumerteindreLed);
 
-				textArea = new TextArea();
-				mainFrame.getContentPane().add(textArea, BorderLayout.SOUTH);
+				lbltatLed = new JLabel("État LED : ");
+				lbltatLed.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
+				lbltatLed.setBounds(489, 27, 115, 16);
+				panel_1.add(lbltatLed);
+
+				lblTempratureConsigne = new JLabel("Température de consigne : ");
+				lblTempratureConsigne.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
+				lblTempratureConsigne.setBounds(50, 53, 250, 24);
+				panel_1.add(lblTempratureConsigne);
+
+				lblTempratureIntrieure = new JLabel("Température intérieure : ");
+				lblTempratureIntrieure.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
+				lblTempratureIntrieure.setBounds(50, 150, 250, 30);
+				panel_1.add(lblTempratureIntrieure);
+
+				lblTempratureDuModule = new JLabel("Température du module réfrigérant : ");
+				lblTempratureDuModule.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
+				lblTempratureDuModule.setBounds(50, 185, 350, 30);
+				panel_1.add(lblTempratureDuModule);
+
+				lblTempratureExtrieure = new JLabel("Température extérieure : ");
+				lblTempratureExtrieure.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
+				lblTempratureExtrieure.setBounds(50, 220, 250, 30);
+				panel_1.add(lblTempratureExtrieure);
+
+				lblCondensation = new JLabel("Condensation :");
+				lblCondensation.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
+				lblCondensation.setBounds(50, 280, 250, 16);
+				panel_1.add(lblCondensation);
+
+				lblAugmentationAnormale = new JLabel("Augmentation anormale de température : ");
+				lblAugmentationAnormale.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
+				lblAugmentationAnormale.setBounds(50, 320, 350, 30);
+				panel_1.add(lblAugmentationAnormale);
+
+				textFieldEtatLED = new JTextField("");
+				textFieldEtatLED.setBounds(589, 24, 116, 22);
+				textFieldEtatLED.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
+				textFieldEtatLED.setEditable(false);
+				panel_1.add(textFieldEtatLED);
+				textFieldEtatLED.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						// if led allumé : allumé
+						// else éteinte
+					}
+				});
+				textFieldEtatLED.setColumns(10);
+
+				consigneTextField = new TextField("" + controller.getConsigne());
+				consigneTextField.setEditable(false);
+				consigneTextField.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
+				consigneTextField.setBounds(120, 83, 65, 63);
+				panel_1.add(consigneTextField);
+
+				anomalieTextField = new JTextField();
+				anomalieTextField.setEditable(false);
+				anomalieTextField.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
+				anomalieTextField.setBounds(420, 280, 250, 22);
+				panel_1.add(anomalieTextField);
+				anomalieTextField.setColumns(10);
+
+				augmentTempTextField = new JTextField();
+				augmentTempTextField.setEditable(false);
+				augmentTempTextField.setColumns(10);
+				augmentTempTextField.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
+				augmentTempTextField.setBounds(420, 320, 116, 22);
+				panel_1.add(augmentTempTextField);
+
+				temperatureInterieurTextField = new JTextField();
+				temperatureInterieurTextField.setEditable(false);
+				temperatureInterieurTextField.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
+				temperatureInterieurTextField.setBounds(420, 150, 116, 22);
+				panel_1.add(temperatureInterieurTextField);
+				temperatureInterieurTextField.setColumns(10);
+
+				temperatureModuleTextField = new JTextField();
+				temperatureModuleTextField.setEditable(false);
+				temperatureModuleTextField.setColumns(10);
+				temperatureModuleTextField.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
+				temperatureModuleTextField.setBounds(420, 185, 116, 22);
+				panel_1.add(temperatureModuleTextField);
+
+				temperatureExterieureTextField = new JTextField();
+				temperatureExterieureTextField.setEditable(false);
+				temperatureExterieureTextField.setColumns(10);
+				temperatureExterieureTextField.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
+				temperatureExterieureTextField.setBounds(420, 220, 116, 22);
+				panel_1.add(temperatureExterieureTextField);
+
 				mainFrame.setVisible(true);
 			}
 		});
@@ -293,22 +305,26 @@ public class View implements Observer {
 
 	public void addDevice(FirmataDevice device) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		logger.info("la view récupère le message arg1 : " + arg1.toString());
-		if(arg1 instanceof String) {
-			if(((String) arg1).startsWith("consigne=")) {
-				logger.info("la view met à jour le consigneTextField");
+		logger.debug("la view récupère le message arg1 : " + arg1.toString());
+		if (arg1 instanceof String) {
+			if (((String) arg1).startsWith("consigne=")) {
+				logger.debug("la view met à jour le consigneTextField");
 				consigneTextField.setText(((String) arg1).split("=")[1]);
 			}
-			if(((String) arg1).startsWith("tempInt=")) {
-				logger.info("la view met à jour le textField_6");
-				textField_6.setText(((String) arg1).split("=")[1]);
+			if (((String) arg1).startsWith("tempInt=")) {
+				logger.debug("la view met à jour le temperatureInterieurTextField");
+				temperatureInterieurTextField.setText(((String) arg1).split("=")[1]);
+			}
+			if (((String) arg1).startsWith("tempExt=")) {
+				logger.debug("la view met à jour le temperatureExterieureTextField");
+				temperatureExterieureTextField.setText(((String) arg1).split("=")[1]);
 			}
 		}
 	}
-	
+
 }
