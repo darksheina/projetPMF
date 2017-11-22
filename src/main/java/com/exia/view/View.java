@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagLayout;
 import java.awt.Label;
 import java.awt.TextField;
 import java.awt.Toolkit;
@@ -12,28 +11,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.regex.Pattern;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
-import org.firmata4j.firmata.FirmataDevice;
-import org.firmata4j.ui.JPinboard;
 
 import com.exia.controller.FridgeController;
-
-import jssc.SerialNativeInterface;
-import jssc.SerialPortList;
 
 /**
  * Example of usage {@link JPinboard}.
@@ -124,20 +116,20 @@ public class View implements Observer {
 				btnAllumerteindreLed = new JButton("Allumer/Éteindre LED");
 				btnAllumerteindreLed.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
 				btnAllumerteindreLed.setBounds(500, 100, 180, 25);
-				btnAllumerteindreLed.addActionListener(new ActionListener() {
+//				btnAllumerteindreLed.addActionListener(new ActionListener() {
 
-					public void actionPerformed(ActionEvent e) {
-						try {
-							textFieldEtatLED.setText("" + controller.Allumer_eteindre());
-						} catch (IllegalStateException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-					}
-				});
+//					public void actionPerformed(ActionEvent e) {
+//						try {
+//							textFieldEtatLED.setText("" + controller.Allumer_eteindre());
+//						} catch (IllegalStateException e1) {
+//							// TODO Auto-generated catch block
+//							e1.printStackTrace();
+//						} catch (IOException e1) {
+//							// TODO Auto-generated catch block
+//							e1.printStackTrace();
+//						}
+//					}
+//				});
 				panel_1.add(btnAllumerteindreLed);
 
 				lbltatLed = new JLabel("État LED : ");
@@ -188,7 +180,7 @@ public class View implements Observer {
 				});
 				textFieldEtatLED.setColumns(10);
 
-				consigneTextField = new TextField("" + controller.getConsigne());
+				consigneTextField = new TextField("");
 				consigneTextField.setEditable(false);
 				consigneTextField.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
 				consigneTextField.setBounds(120, 83, 65, 63);
@@ -234,37 +226,6 @@ public class View implements Observer {
 		});
 	}
 
-	@SuppressWarnings("unchecked")
-	private static String requestPort() {
-		JComboBox<String> portNameSelector = new JComboBox<>();
-		portNameSelector.setModel(new DefaultComboBoxModel<String>());
-		String[] portNames;
-		if (SerialNativeInterface.getOsType() == SerialNativeInterface.OS_MAC_OS_X) {
-			// for MAC OS default pattern of jssc library is too restrictive
-			portNames = SerialPortList.getPortNames("/dev/", Pattern.compile("tty\\..*"));
-		} else {
-			portNames = SerialPortList.getPortNames();
-		}
-		for (String portName : portNames) {
-			portNameSelector.addItem(portName);
-		}
-		if (portNameSelector.getItemCount() == 0) {
-			JOptionPane.showMessageDialog(null, "Cannot find any serial port", "Error", JOptionPane.ERROR_MESSAGE);
-			System.exit(1);
-		}
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridBagLayout());
-		panel.add(new JLabel("Port "));
-		panel.add(portNameSelector);
-		if (JOptionPane.showConfirmDialog(null, panel, "Select the port",
-				JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-			return portNameSelector.getSelectedItem().toString();
-		} else {
-			System.exit(0);
-		}
-		return "";
-	}
-
 	private static void showInitializationMessage() {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
@@ -303,26 +264,26 @@ public class View implements Observer {
 		}
 	}
 
-	public void addDevice(FirmataDevice device) {
-		// TODO Auto-generated method stub
-
-	}
-
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		logger.debug("la view récupère le message arg1 : " + arg1.toString());
-		if (arg1 instanceof String) {
-			if (((String) arg1).startsWith("consigne=")) {
-				logger.debug("la view met à jour le consigneTextField");
-				consigneTextField.setText(((String) arg1).split("=")[1]);
-			}
-			if (((String) arg1).startsWith("tempInt=")) {
-				logger.debug("la view met à jour le temperatureInterieurTextField");
-				temperatureInterieurTextField.setText(((String) arg1).split("=")[1]);
-			}
-			if (((String) arg1).startsWith("tempExt=")) {
-				logger.debug("la view met à jour le temperatureExterieureTextField");
-				temperatureExterieureTextField.setText(((String) arg1).split("=")[1]);
+		if (arg1 instanceof HashMap) {
+			HashMap<String, String> nouvelleValeur = (HashMap) arg1;
+			for (Entry<String, String> valeur : nouvelleValeur.entrySet()) {
+				if(valeur.getKey().equals("humidity")) {
+					// FIXME
+				}
+				if(valeur.getKey().equals("tempint")) {
+					temperatureInterieurTextField.setText(valeur.getValue());
+				}
+				if(valeur.getKey().equals("tempext")) {
+					temperatureExterieureTextField.setText(valeur.getValue());
+				}
+				if(valeur.getKey().equals("pointrosee")) {
+					temperatureModuleTextField.setText(valeur.getValue()); // FIXME
+				}
+				if(valeur.getKey().equals("consigne")) {
+					consigneTextField.setText(valeur.getValue());
+				}
 			}
 		}
 	}

@@ -1,0 +1,153 @@
+// Test des capteurs d'humidité et de température DHT-11 / DHT-21 /  DHT-22
+// Code adapté de l'exemple DHTTester de ladyada (Adafruit)
+// Projets DIY - 22/01/2016
+
+#include "DHT.h"   // Librairie des capteurs DHT
+#include <math.h>   //Pour faire les calculs et tout
+#define DHTPIN 2    // Changer le pin sur lequel est branché le DHT
+#define Gate 5    // C'est le port ~5 de l'Arduino sur lequel on a branché la grille du MOSFET
+#define ThermistorPIN 0 //PIN de la thermistance
+#define DHTTYPE DHT22      // DHT 22  (AM2302)
+
+// Initialisation du capteur pour un Arduino à 16mhz par défaut
+// Il faudra modifier le 3ème paramètres pour une autre carte (sinon le capteur renvoie 0). Quelques valeurs : 8mhz => 3, 16mhz => 6, 84mhz => 84
+double Thermistor(int RawADC) {
+  long Resistance;  double Temp;
+  Resistance=10000.0*((1024.0/RawADC) - 1);
+  Temp = log(Resistance);
+  Temp = 1 / (0.00109858 + (0.00023997 * Temp) + (0.000000058454 * Temp * Temp * Temp));
+  Temp = Temp - 273.15;
+   return Temp;
+}
+int incomingByte = 0;   // for incoming serial data
+ char incomingSerialData[25]; // A character array to store received bytes
+ char incomingSerialDataTemp; // A character array to store received bytes
+ char incomingSerialDataTempSTOP = 'c'; // A character array to store received bytes
+ int incomingSerialDataIndex = 0; // Stores the next 'empty space' in the array
+ long consigne = 18; // Stores the next 'empty space' in the array
+
+
+void printDouble(double val, byte precision) {
+  // fonction qui permet de donner une précision à un nombre avec beaucoup de chiffres après la virgule
+  Serial.print (int(val));  //prints the int part
+  if( precision > 0) {
+   Serial.print("."); // print the decimal point
+    unsigned long frac, mult = 1;
+    byte padding = precision -1;
+    while(precision--) mult *=10;
+    if(val >= 0) frac = (val - int(val)) * mult; else frac = (int(val) - val) * mult;
+    unsigned long frac1 = frac;
+    while(frac1 /= 10) padding--;
+    while(padding--) Serial.print("0");
+   Serial.print(frac,DEC) ;
+  }
+}
+
+DHT dht(DHTPIN, DHTTYPE); //?? Là je sais pas, ca doit être pour bien définir le DHT22
+
+void setup() {
+  Serial.begin(9600); //Permet de préciser le taux de rafraichissement à 9600 bauds
+  pinMode (Gate,OUTPUT); // Ca ca dit que la grille du MOSFET est en sortie?
+  digitalWrite(Gate,LOW);// Ferme la grille du MOSFET, ce qui coupe le ventilateur du module Peltier 
+  dht.begin(); //Vraiment je suis pas à jour pour la partie DHT ^^'
+}
+
+#define ThermistorPIN 0   // Analog Pin 0
+double temp; //Cr"ation de la variable temp :D
+
+void loop() {
+  // Délai de 2 secondes entre chaque mesure. La lecture prend 250 millisecondes
+  delay(2000);
+
+   // send data only when you receive data:
+  if (Serial.available() > 0) {
+    char debugMessage[25];
+    int debugMessageIndex = 0;
+    memset(incomingSerialData, 0, sizeof(incomingSerialData));
+    incomingSerialDataIndex = 0;
+    while(Serial.available() > 0)
+      {
+        incomingSerialDataTemp = Serial.read(); // Add the incoming byte to the array
+        debugMessage[debugMessageIndex++] = incomingSerialDataTemp;
+        if(incomingSerialDataIndex > 1) {
+          memset(incomingSerialData, 0, sizeof(incomingSerialData));
+          incomingSerialDataIndex = 0;
+          incomingSerialData[incomingSerialDataIndex] = incomingSerialDataTemp;
+          incomingSerialDataIndex++; // Ensure the next byte is added in the next position
+        } else {
+          incomingSerialData[incomingSerialDataIndex] = incomingSerialDataTemp;
+          incomingSerialDataIndex++; // Ensure the next byte is added in the next position
+        }
+      }
+      long newConsigne = atol(incomingSerialData);
+      if(newConsigne < 99 && consigne > 1) {
+        consigne = newConsigne;
+      }
+      Serial.flush();
+  }
+
+  // Lecture du taux d'humidité (Valeur à récupérer pour l'IHM)
+  float h = dht.readHumidity();
+  // Lecture de la température à l'intérieur du frigo en °Celcius (Valeur à récupérer pour l'IHM)
+  float t = dht.readTemperature();
+  // Pour lire la température en Fahrenheit mais ici jpense on s'en fout
+  float f = dht.readTemperature(true);
+  h = 50;
+  t = 50;
+  f = 50;
+  // Stoppe le programme et renvoie un message d'erreur si le capteur ne renvoie aucune mesure
+  if (isnan(h) || isnan(t) || isnan(f)) {
+    Serial.println("Echec de lecture !");
+    return;
+  }
+  
+
+  // Calcul de la température ressentie. Le calcul est effectué à partir de la température en Fahrenheit
+  // On fait la conversion en Celcius dans la foulée
+  float hi = dht.computeHeatIndex(f, h);
+
+
+  digitalWrite(Gate,50); //Ouvre la grille du MOSFET, ce qui fait tourner le ventilo
+  
+ 
+  Serial.print("{humidity:"); 
+  Serial.print(h); //Affiche l'humidité
+  Serial.print(",");
+  Serial.print("tempint:"); 
+  Serial.print(t); //Affiche la tempétaure interne
+  Serial.print(",");
+  Serial.print("consigne:"); 
+  Serial.print(consigne); //Affiche la tempétaure interne
+  Serial.print(",");
+  Serial.print("pointrosee:");
+  Serial.print(dewPoint(h,t)); //Affiche la température du point de rosée calculée à partir de la température et de l'humidité
+  Serial.print(",");
+
+  temp = Thermistor(analogRead(ThermistorPIN)); // read ADC and convert it to Celsius
+  Serial.print("tempext:"); printDouble(temp,3); //Affiche la température externe
+  Serial.println("}");
+
+   
+        /*if (Serial.available() > 0) {
+                // read the incoming byte:
+                incomingByte = Serial.read();
+                String myString = String(incomingByte);
+                // say what you got:
+                Serial.print("I received: ");
+                Serial.println(incomingByte, DEC);
+                Serial.print("I received incomingSerialData : ");
+                Serial.println(incomingSerialData);
+        }*/
+}
+
+/** Fonction de calcul rapide du point de rosée en fonction de la température et de l'humidité ambiante */
+double dewPoint(double celsius, double humidity) {
+
+
+  const double a = 17.27;
+  const double b = 237.7;
+
+  // Calcul (approximation)
+  double temp = (a * celsius) / (b + celsius) + log(humidity * 0.01);
+  return (b * temp) / (a - temp);
+}
