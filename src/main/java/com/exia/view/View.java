@@ -16,7 +16,6 @@ import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -48,23 +47,29 @@ public class View implements Observer {
 	private JPanel panel;
 	private JPanel panel_1;
 	private Label label;
-	private JLabel lbltatLed;
+	private JLabel lbltatHumidity;
+	private JLabel lbltatPourcent;
+	private JLabel lbltatPointRosee;
+	private JLabel lbltatPointRoseeDegree;
 	private JLabel lblTempratureConsigne;
 	private JLabel lblTempratureIntrieure;
+	private JLabel lblTempratureIntrieureDegree;
 	private JLabel lblTempratureDuModule;
+	private JLabel lblTempratureDuModuleDegree;
 	private JLabel lblTempratureExtrieure;
+	private JLabel lblTempratureExtrieureDegree;
 	private JLabel lblCondensation;
 	private JLabel lblAugmentationAnormale;
-	private JTextField anomalieTextField;
-	private JTextField augmentTempTextField;
+	private JTextField condensationTextField;
+	private JTextField anomalieTempTextField;
 	private JTextField temperatureInterieurTextField;
 	private JTextField temperatureModuleTextField;
 	private TextField consigneTextField;
 	private JTextField temperatureExterieureTextField;
-	private JTextField textFieldEtatLED;
+	private JTextField humiditeTextField;
+	private JTextField pointRoseeTextField;
 	private Button button;
 	private Button button_1;
-	private JButton btnAllumerteindreLed;
 
 	/**
 	 * @wbp.parser.entryPoint
@@ -113,49 +118,60 @@ public class View implements Observer {
 					}
 				});
 
-				btnAllumerteindreLed = new JButton("Allumer/Éteindre LED");
-				btnAllumerteindreLed.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
-				btnAllumerteindreLed.setBounds(500, 100, 180, 25);
-//				btnAllumerteindreLed.addActionListener(new ActionListener() {
-
-//					public void actionPerformed(ActionEvent e) {
-//						try {
-//							textFieldEtatLED.setText("" + controller.Allumer_eteindre());
-//						} catch (IllegalStateException e1) {
-//							// TODO Auto-generated catch block
-//							e1.printStackTrace();
-//						} catch (IOException e1) {
-//							// TODO Auto-generated catch block
-//							e1.printStackTrace();
-//						}
-//					}
-//				});
-				panel_1.add(btnAllumerteindreLed);
-
-				lbltatLed = new JLabel("État LED : ");
-				lbltatLed.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
-				lbltatLed.setBounds(489, 27, 115, 16);
-				panel_1.add(lbltatLed);
+				lbltatHumidity = new JLabel("Humidité : ");
+				lbltatHumidity.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
+				lbltatHumidity.setBounds(350, 50, 115, 16);
+				panel_1.add(lbltatHumidity);
+				
+				lbltatPourcent = new JLabel("%");
+				lbltatPourcent.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
+				lbltatPourcent.setBounds(550, 50, 115, 16);
+				panel_1.add(lbltatPourcent);
+				
+				lbltatPointRosee = new JLabel("Point de rosée : ");
+				lbltatPointRosee.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
+				lbltatPointRosee.setBounds(350, 80, 150, 16);
+				panel_1.add(lbltatPointRosee);
+				
+				lbltatPointRoseeDegree = new JLabel("°C");
+				lbltatPointRoseeDegree.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
+				lbltatPointRoseeDegree.setBounds(600, 80, 150, 16);
+				panel_1.add(lbltatPointRoseeDegree);
 
 				lblTempratureConsigne = new JLabel("Température de consigne : ");
 				lblTempratureConsigne.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
 				lblTempratureConsigne.setBounds(50, 53, 250, 24);
 				panel_1.add(lblTempratureConsigne);
-
+				
 				lblTempratureIntrieure = new JLabel("Température intérieure : ");
 				lblTempratureIntrieure.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
 				lblTempratureIntrieure.setBounds(50, 150, 250, 30);
 				panel_1.add(lblTempratureIntrieure);
+				
+				lblTempratureIntrieureDegree = new JLabel("°C");
+				lblTempratureIntrieureDegree.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
+				lblTempratureIntrieureDegree.setBounds(550, 150, 115, 16);
+				panel_1.add(lblTempratureIntrieureDegree);
 
 				lblTempratureDuModule = new JLabel("Température du module réfrigérant : ");
 				lblTempratureDuModule.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
 				lblTempratureDuModule.setBounds(50, 185, 350, 30);
 				panel_1.add(lblTempratureDuModule);
+				
+				lblTempratureDuModuleDegree = new JLabel("°C");
+				lblTempratureDuModuleDegree.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
+				lblTempratureDuModuleDegree.setBounds(550, 185, 115, 16);
+				panel_1.add(lblTempratureDuModuleDegree);
 
 				lblTempratureExtrieure = new JLabel("Température extérieure : ");
 				lblTempratureExtrieure.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
 				lblTempratureExtrieure.setBounds(50, 220, 250, 30);
 				panel_1.add(lblTempratureExtrieure);
+				
+				lblTempratureExtrieureDegree = new JLabel("°C");
+				lblTempratureExtrieureDegree.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
+				lblTempratureExtrieureDegree.setBounds(550, 220, 115, 16);
+				panel_1.add(lblTempratureExtrieureDegree);
 
 				lblCondensation = new JLabel("Condensation :");
 				lblCondensation.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
@@ -167,18 +183,19 @@ public class View implements Observer {
 				lblAugmentationAnormale.setBounds(50, 320, 350, 30);
 				panel_1.add(lblAugmentationAnormale);
 
-				textFieldEtatLED = new JTextField("");
-				textFieldEtatLED.setBounds(589, 24, 116, 22);
-				textFieldEtatLED.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
-				textFieldEtatLED.setEditable(false);
-				panel_1.add(textFieldEtatLED);
-				textFieldEtatLED.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						// if led allumé : allumé
-						// else éteinte
-					}
-				});
-				textFieldEtatLED.setColumns(10);
+				humiditeTextField = new JTextField("");
+				humiditeTextField.setBounds(450, 50, 80, 22);
+				humiditeTextField.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
+				humiditeTextField.setEditable(false);
+				panel_1.add(humiditeTextField);
+				humiditeTextField.setColumns(10);
+				
+				pointRoseeTextField = new JTextField("");
+				pointRoseeTextField.setBounds(500, 80, 80, 22);
+				pointRoseeTextField.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
+				pointRoseeTextField.setEditable(false);
+				panel_1.add(pointRoseeTextField);
+				pointRoseeTextField.setColumns(10);
 
 				consigneTextField = new TextField("");
 				consigneTextField.setEditable(false);
@@ -186,19 +203,20 @@ public class View implements Observer {
 				consigneTextField.setBounds(120, 83, 65, 63);
 				panel_1.add(consigneTextField);
 
-				anomalieTextField = new JTextField();
-				anomalieTextField.setEditable(false);
-				anomalieTextField.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
-				anomalieTextField.setBounds(420, 280, 250, 22);
-				panel_1.add(anomalieTextField);
-				anomalieTextField.setColumns(10);
+				condensationTextField = new JTextField("");
+				condensationTextField.setEditable(false);
+				
+				condensationTextField.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
+				condensationTextField.setBounds(200, 280, 150, 22);
+				panel_1.add(condensationTextField);
+				condensationTextField.setColumns(10);
 
-				augmentTempTextField = new JTextField();
-				augmentTempTextField.setEditable(false);
-				augmentTempTextField.setColumns(10);
-				augmentTempTextField.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
-				augmentTempTextField.setBounds(420, 320, 116, 22);
-				panel_1.add(augmentTempTextField);
+				anomalieTempTextField = new JTextField();
+				anomalieTempTextField.setEditable(false);
+				anomalieTempTextField.setColumns(10);
+				anomalieTempTextField.setFont(new Font("Gill Sans MT", Font.PLAIN, 20));
+				anomalieTempTextField.setBounds(420, 320, 150, 22);
+				panel_1.add(anomalieTempTextField);
 
 				temperatureInterieurTextField = new JTextField();
 				temperatureInterieurTextField.setEditable(false);
@@ -225,6 +243,8 @@ public class View implements Observer {
 			}
 		});
 	}
+	
+
 
 	private static void showInitializationMessage() {
 		try {
@@ -270,7 +290,7 @@ public class View implements Observer {
 			HashMap<String, String> nouvelleValeur = (HashMap) arg1;
 			for (Entry<String, String> valeur : nouvelleValeur.entrySet()) {
 				if(valeur.getKey().equals("humidity")) {
-					// FIXME
+					humiditeTextField.setText(valeur.getValue());
 				}
 				if(valeur.getKey().equals("tempint")) {
 					temperatureInterieurTextField.setText(valeur.getValue());
@@ -278,11 +298,20 @@ public class View implements Observer {
 				if(valeur.getKey().equals("tempext")) {
 					temperatureExterieureTextField.setText(valeur.getValue());
 				}
+				if(valeur.getKey().equals("temppeltier")) {
+					temperatureModuleTextField.setText(valeur.getValue());
+				}
 				if(valeur.getKey().equals("pointrosee")) {
-					temperatureModuleTextField.setText(valeur.getValue()); // FIXME
+					pointRoseeTextField.setText(valeur.getValue());
 				}
 				if(valeur.getKey().equals("consigne")) {
 					consigneTextField.setText(valeur.getValue());
+				}
+				if(valeur.getKey().equals("condensation")) {
+					condensationTextField.setText(valeur.getValue());
+				}
+				if(valeur.getKey().equals("anomalie")) {
+					anomalieTempTextField.setText(valeur.getValue());
 				}
 			}
 		}

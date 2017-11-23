@@ -26,7 +26,7 @@ public class FridgeModelImpl extends Observable implements FridgeModel, SerialPo
 
 	SerialPort serialPort;
 	/** The port we're normally going to use. */
-	private static final String PORT_NAMES[] = { "COM10" };
+	private static final String PORT_NAMES[] = { "COM6" };
 	/**
 	 * A BufferedReader which will be fed by a InputStreamReader converting the
 	 * bytes into characters making the displayed results codepage independent
